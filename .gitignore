@@ -20,3 +20,8 @@ uploads/
 *.iml
 Thumbs.db
 .DS_Store
+
+# Local database files
+backend/data/
+*.mv.db
+*.trace.db
