@@ -1,0 +1,22 @@
+# Java / Maven
+target/
+*.class
+.mvn/wrapper/maven-wrapper.jar
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
+
+# Local configuration
+.env
+.env.local
+application-local.properties
+uploads/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+.DS_Store
