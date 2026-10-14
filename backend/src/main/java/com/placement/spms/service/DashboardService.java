@@ -34,7 +34,7 @@ public class DashboardService {
                 applicationRepository.countByStudent(student),
                 applicationRepository.countByStudentAndStatus(student, ApplicationStatus.UNDER_REVIEW),
                 applicationRepository.countByStudentAndStatus(student, ApplicationStatus.SHORTLISTED),
-                interviewRepository.findByApplicationStudentId(student.getId()).size(),
+                interviewRepository.findAll().stream().filter(interview -> interview.getApplication().getStudent().getId().equals(student.getId())).count(),
                 applicationRepository.countByStudentAndStatus(student, ApplicationStatus.SELECTED)
         );
     }
@@ -44,11 +44,11 @@ public class DashboardService {
         return new CompanyDashboard(
                 driveRepository.countByCompany(company),
                 driveRepository.countByCompanyAndStatus(company, DriveStatus.OPEN),
-                applicationRepository.countByPlacementDriveCompanyId(company.getId()),
-                applicationRepository.countByPlacementDriveCompanyIdAndStatus(company.getId(), ApplicationStatus.APPLIED),
-                applicationRepository.countByPlacementDriveCompanyIdAndStatus(company.getId(), ApplicationStatus.SHORTLISTED),
-                applicationRepository.countByPlacementDriveCompanyIdAndStatus(company.getId(), ApplicationStatus.INTERVIEW_SCHEDULED),
-                applicationRepository.countByPlacementDriveCompanyIdAndStatus(company.getId(), ApplicationStatus.SELECTED)
+                applicationsFor(company).count(),
+                applicationsFor(company).filter(application -> application.getStatus() == ApplicationStatus.APPLIED).count(),
+                applicationsFor(company).filter(application -> application.getStatus() == ApplicationStatus.SHORTLISTED).count(),
+                applicationsFor(company).filter(application -> application.getStatus() == ApplicationStatus.INTERVIEW_SCHEDULED).count(),
+                applicationsFor(company).filter(application -> application.getStatus() == ApplicationStatus.SELECTED).count()
         );
     }
 
@@ -59,5 +59,10 @@ public class DashboardService {
         return new AdminDashboard(students, userRepository.countByRole(Role.COMPANY), driveRepository.count(),
                 driveRepository.countByStatus(DriveStatus.OPEN), applicationRepository.count(),
                 applicationRepository.countByStatus(ApplicationStatus.SHORTLISTED), selected, percentage);
+    }
+
+    private java.util.stream.Stream<com.placement.spms.entity.Application> applicationsFor(Company company) {
+        return applicationRepository.findAll().stream()
+                .filter(application -> application.getPlacementDrive().getCompany().getId().equals(company.getId()));
     }
 }

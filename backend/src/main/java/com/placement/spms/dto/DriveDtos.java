@@ -27,7 +27,7 @@ public class DriveDtos {
     ) {}
 
     public record DriveResponse(
-            Long id, String companyName, Long companyId, String jobTitle, String jobDescription,
+            String id, String companyName, String companyId, String jobTitle, String jobDescription,
             String requiredQualifications, String location, String employmentType, BigDecimal salaryPackage,
             BigDecimal minimumCgpa, String eligibleDepartments, String eligibleGraduationYears,
             Integer maxBacklogs, String requiredSkills, LocalDate applicationOpenDate,

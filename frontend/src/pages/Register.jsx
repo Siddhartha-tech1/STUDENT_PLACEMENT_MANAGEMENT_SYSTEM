@@ -11,7 +11,7 @@ export default function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
   const isCompany = role === 'company';
-  const { options } = useOptions();
+  const { options, error: optionsError } = useOptions();
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     fullName: '', email: '', password: '', studentId: '', department: '', graduationYear: new Date().getFullYear() + 1,
@@ -32,6 +32,7 @@ export default function Register() {
   return (
     <AuthCard title={isCompany ? 'Company Registration' : 'Student Registration'}>
       <ErrorMessage message={error} />
+      {optionsError ? <p className="text-secondary mb-3">Using built-in registration options while the server is unavailable.</p> : null}
       <form onSubmit={submit} className="vstack gap-3">
         <Input label="Full name" value={form.fullName} onChange={(fullName) => setForm({ ...form, fullName })} />
         <Input label="Email" type="email" value={form.email} onChange={(email) => setForm({ ...form, email })} />

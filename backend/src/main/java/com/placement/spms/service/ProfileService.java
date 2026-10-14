@@ -7,6 +7,7 @@ import com.placement.spms.entity.User;
 import com.placement.spms.exception.ApiException;
 import com.placement.spms.repository.CompanyRepository;
 import com.placement.spms.repository.StudentRepository;
+import com.placement.spms.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,14 @@ public class ProfileService {
     private final CurrentUserService currentUserService;
     private final StudentRepository studentRepository;
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
-    public ProfileService(CurrentUserService currentUserService, StudentRepository studentRepository, CompanyRepository companyRepository) {
+    public ProfileService(CurrentUserService currentUserService, StudentRepository studentRepository, CompanyRepository companyRepository,
+                          UserRepository userRepository) {
         this.currentUserService = currentUserService;
         this.studentRepository = studentRepository;
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
 
     public Student student() {
@@ -53,6 +57,7 @@ public class ProfileService {
         if (request.skills() != null) student.setSkills(request.skills());
         if (request.certifications() != null) student.setCertifications(request.certifications());
         if (request.projects() != null) student.setProjects(request.projects());
+        userRepository.save(user);
         return toStudentResponse(studentRepository.save(student));
     }
 
@@ -71,6 +76,7 @@ public class ProfileService {
         if (request.contactPerson() != null) company.setContactPerson(request.contactPerson());
         if (request.contactNumber() != null) company.setContactNumber(request.contactNumber());
         if (request.location() != null) company.setLocation(request.location());
+        userRepository.save(company.getUser());
         return toCompanyResponse(companyRepository.save(company));
     }
 

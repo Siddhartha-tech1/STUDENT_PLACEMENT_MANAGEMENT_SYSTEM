@@ -1,13 +1,10 @@
 package com.placement.spms.repository;
 
 import com.placement.spms.entity.InterviewSchedule;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface InterviewScheduleRepository extends JpaRepository<InterviewSchedule, Long> {
-    Optional<InterviewSchedule> findByApplicationId(Long applicationId);
-    List<InterviewSchedule> findByApplicationStudentId(Long studentId);
-    List<InterviewSchedule> findByApplicationPlacementDriveCompanyId(Long companyId);
+public interface InterviewScheduleRepository extends MongoRepository<InterviewSchedule, String> {
+    Optional<InterviewSchedule> findByApplication(com.placement.spms.entity.Application application);
 }

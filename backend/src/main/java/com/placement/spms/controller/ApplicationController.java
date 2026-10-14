@@ -34,22 +34,22 @@ public class ApplicationController {
     }
 
     @GetMapping("/{id}")
-    public ApplicationResponse get(@PathVariable Long id) {
+    public ApplicationResponse get(@PathVariable String id) {
         return applicationService.get(id);
     }
 
     @GetMapping("/drive/{driveId}")
-    public List<ApplicationResponse> applicants(@PathVariable Long driveId) {
+    public List<ApplicationResponse> applicants(@PathVariable String driveId) {
         return applicationService.applicants(driveId);
     }
 
     @PatchMapping("/{id}/status")
-    public ApplicationResponse status(@PathVariable Long id, @Valid @RequestBody StatusRequest request) {
+    public ApplicationResponse status(@PathVariable String id, @Valid @RequestBody StatusRequest request) {
         return applicationService.status(id, request);
     }
 
     @GetMapping("/{id}/resume")
-    public ResponseEntity<Resource> resume(@PathVariable Long id) {
+    public ResponseEntity<Resource> resume(@PathVariable String id) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"resume.pdf\"")

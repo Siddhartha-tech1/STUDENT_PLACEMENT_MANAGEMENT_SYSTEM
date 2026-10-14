@@ -1,29 +1,27 @@
 package com.placement.spms.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "companies")
+@Document("companies")
 public class Company {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @DBRef
     private User user;
 
-    @Column(nullable = false)
     private String companyName;
     private String website;
     private String industry;
-    @Column(length = 1500)
     private String description;
     private String contactPerson;
     private String contactNumber;
     private String location;
     private boolean verified = true;
 
-    public Long getId() { return id; }
+    public String getId() { return id; }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
     public String getCompanyName() { return companyName; }

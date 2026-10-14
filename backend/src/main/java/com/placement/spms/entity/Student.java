@@ -1,43 +1,39 @@
 package com.placement.spms.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Entity
-@Table(name = "students", uniqueConstraints = @UniqueConstraint(columnNames = "studentId"))
+@Document("students")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @DBRef
     private User user;
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private String studentId;
     private String phone;
     private String college;
     private String university;
-    @Column(nullable = false)
     private String department;
     private String degree;
-    @Column(nullable = false)
     private Integer graduationYear;
     private BigDecimal cgpa;
     private Integer backlogs = 0;
-    @Column(length = 1200)
     private String skills;
-    @Column(length = 1500)
     private String certifications;
-    @Column(length = 1500)
     private String projects;
     private String resumeFileName;
     private String resumeContentType;
     private Long resumeSize;
     private Instant resumeUploadedAt;
 
-    public Long getId() { return id; }
+    public String getId() { return id; }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
     public String getStudentId() { return studentId; }

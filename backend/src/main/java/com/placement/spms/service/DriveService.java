@@ -6,6 +6,7 @@ import com.placement.spms.exception.ApiException;
 import com.placement.spms.repository.ApplicationRepository;
 import com.placement.spms.repository.PlacementDriveRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,13 @@ public class DriveService {
     }
 
     public Page<DriveResponse> search(String keyword, DriveStatus status, Pageable pageable) {
-        return driveRepository.search(blankToNull(keyword), status, pageable).map(this::toResponse);
+        List<PlacementDrive> matches = driveRepository.findAll().stream()
+                .filter(drive -> status == null || drive.getStatus() == status)
+                .filter(drive -> matchesKeyword(drive, blankToNull(keyword)))
+                .toList();
+        int start = (int) Math.min(pageable.getOffset(), matches.size());
+        int end = Math.min(start + pageable.getPageSize(), matches.size());
+        return new PageImpl<>(matches.subList(start, end).stream().map(this::toResponse).toList(), pageable, matches.size());
     }
 
     public List<DriveResponse> myCompanyDrives() {
@@ -39,7 +46,7 @@ public class DriveService {
                 .stream().map(this::toResponse).toList();
     }
 
-    public DriveResponse get(Long id) {
+    public DriveResponse get(String id) {
         return toResponse(find(id));
     }
 
@@ -52,25 +59,25 @@ public class DriveService {
     }
 
     @Transactional
-    public DriveResponse update(Long id, DriveRequest request) {
+    public DriveResponse update(String id, DriveRequest request) {
         PlacementDrive drive = ownedDrive(id);
         apply(request, drive);
         return toResponse(driveRepository.save(drive));
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
         driveRepository.delete(ownedDrive(id));
     }
 
     @Transactional
-    public DriveResponse updateStatus(Long id, DriveStatus status) {
+    public DriveResponse updateStatus(String id, DriveStatus status) {
         PlacementDrive drive = currentUserService.user().getRole() == Role.ADMIN ? find(id) : ownedDrive(id);
         drive.setStatus(status);
         return toResponse(driveRepository.save(drive));
     }
 
-    public EligibilityResponse eligibility(Long id) {
+    public EligibilityResponse eligibility(String id) {
         return eligibility(profileService.student(), find(id));
     }
 
@@ -91,11 +98,11 @@ public class DriveService {
         return new EligibilityResponse(true, "Eligible to apply");
     }
 
-    public PlacementDrive find(Long id) {
+    public PlacementDrive find(String id) {
         return driveRepository.findById(id).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Placement drive not found"));
     }
 
-    private PlacementDrive ownedDrive(Long id) {
+    private PlacementDrive ownedDrive(String id) {
         PlacementDrive drive = find(id);
         if (!drive.getCompany().getUser().getId().equals(currentUserService.user().getId())) {
             throw new ApiException(HttpStatus.FORBIDDEN, "You can manage only your company's drives");
@@ -141,5 +148,16 @@ public class DriveService {
 
     private String blankToNull(String value) {
         return value == null || value.isBlank() ? null : value;
+    }
+
+    private boolean matchesKeyword(PlacementDrive drive, String keyword) {
+        if (keyword == null) return true;
+        String query = keyword.toLowerCase();
+        return contains(drive.getJobTitle(), query) || contains(drive.getCompany().getCompanyName(), query)
+                || contains(drive.getLocation(), query) || contains(drive.getRequiredSkills(), query);
+    }
+
+    private boolean contains(String value, String query) {
+        return value != null && value.toLowerCase().contains(query);
     }
 }

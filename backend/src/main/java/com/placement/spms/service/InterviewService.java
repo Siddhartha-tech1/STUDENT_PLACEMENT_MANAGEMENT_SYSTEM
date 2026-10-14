@@ -34,7 +34,7 @@ public class InterviewService {
         if (!application.getPlacementDrive().getCompany().getUser().getId().equals(currentUserService.user().getId())) {
             throw new ApiException(HttpStatus.FORBIDDEN, "You can schedule interviews only for your applicants");
         }
-        InterviewSchedule schedule = interviewRepository.findByApplicationId(application.getId()).orElseGet(InterviewSchedule::new);
+        InterviewSchedule schedule = interviewRepository.findByApplication(application).orElseGet(InterviewSchedule::new);
         schedule.setApplication(application);
         schedule.setInterviewRound(request.interviewRound());
         schedule.setInterviewDateTime(request.interviewDateTime());
@@ -49,13 +49,13 @@ public class InterviewService {
     public List<InterviewResponse> my() {
         User user = currentUserService.user();
         List<InterviewSchedule> schedules = user.getRole() == Role.STUDENT
-                ? interviewRepository.findByApplicationStudentId(profileService.student().getId())
-                : interviewRepository.findByApplicationPlacementDriveCompanyId(profileService.company().getId());
+                ? interviewRepository.findAll().stream().filter(schedule -> schedule.getApplication().getStudent().getId().equals(profileService.student().getId())).toList()
+                : interviewRepository.findAll().stream().filter(schedule -> schedule.getApplication().getPlacementDrive().getCompany().getId().equals(profileService.company().getId())).toList();
         return schedules.stream().map(this::toResponse).toList();
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(String id) {
         InterviewSchedule schedule = interviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Interview not found"));
         if (!schedule.getApplication().getPlacementDrive().getCompany().getUser().getId().equals(currentUserService.user().getId())) {

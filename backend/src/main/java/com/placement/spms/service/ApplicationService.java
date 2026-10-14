@@ -49,7 +49,7 @@ public class ApplicationService {
         return applicationRepository.findByStudentOrderByApplicationDateDesc(profileService.student()).stream().map(this::toResponse).toList();
     }
 
-    public List<ApplicationResponse> applicants(Long driveId) {
+    public List<ApplicationResponse> applicants(String driveId) {
         PlacementDrive drive = driveService.find(driveId);
         if (!drive.getCompany().getUser().getId().equals(currentUserService.user().getId())) {
             throw new ApiException(HttpStatus.FORBIDDEN, "You can view applicants only for your drives");
@@ -57,12 +57,12 @@ public class ApplicationService {
         return applicationRepository.findByPlacementDriveOrderByApplicationDateDesc(drive).stream().map(this::toResponse).toList();
     }
 
-    public ApplicationResponse get(Long id) {
+    public ApplicationResponse get(String id) {
         return toResponse(authorized(id));
     }
 
     @Transactional
-    public ApplicationResponse status(Long id, StatusRequest request) {
+    public ApplicationResponse status(String id, StatusRequest request) {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Application not found"));
         User user = currentUserService.user();
@@ -74,7 +74,7 @@ public class ApplicationService {
         return toResponse(applicationRepository.save(application));
     }
 
-    public Application authorized(Long id) {
+    public Application authorized(String id) {
         Application application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Application not found"));
         User user = currentUserService.user();
@@ -86,7 +86,7 @@ public class ApplicationService {
     }
 
     public ApplicationResponse toResponse(Application application) {
-        InterviewResponse interview = interviewRepository.findByApplicationId(application.getId())
+        InterviewResponse interview = interviewRepository.findByApplication(application)
                 .map(schedule -> new InterviewResponse(schedule.getId(), application.getId(),
                         application.getPlacementDrive().getCompany().getCompanyName(), application.getPlacementDrive().getJobTitle(),
                         application.getStudent().getUser().getFullName(), schedule.getInterviewRound(),

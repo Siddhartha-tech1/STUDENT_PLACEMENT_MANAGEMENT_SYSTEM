@@ -21,5 +21,5 @@ public class AuthDtos {
 
     public record LoginRequest(@Email @NotBlank String email, @NotBlank String password) {}
 
-    public record AuthResponse(String token, Long userId, String fullName, String email, Role role) {}
+    public record AuthResponse(String token, String userId, String fullName, String email, Role role) {}
 }

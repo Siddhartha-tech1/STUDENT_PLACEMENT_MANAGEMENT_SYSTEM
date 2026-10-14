@@ -1,55 +1,43 @@
 package com.placement.spms.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 
-@Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Document("users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String passwordHash;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private AccountStatus status = AccountStatus.ACTIVE;
 
-    @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
-    @Column(nullable = false)
     private Instant updatedAt = Instant.now();
 
-    @PreUpdate
-    void touch() {
-        updatedAt = Instant.now();
-    }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; touch(); }
     public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) { this.email = email; touch(); }
     public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; touch(); }
     public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
+    public void setRole(Role role) { this.role = role; touch(); }
     public AccountStatus getStatus() { return status; }
-    public void setStatus(AccountStatus status) { this.status = status; }
+    public void setStatus(AccountStatus status) { this.status = status; touch(); }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    private void touch() { updatedAt = Instant.now(); }
 }

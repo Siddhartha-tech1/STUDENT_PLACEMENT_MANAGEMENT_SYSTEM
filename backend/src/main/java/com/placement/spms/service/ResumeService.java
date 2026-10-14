@@ -62,7 +62,7 @@ public class ResumeService {
         return resumeForStudent(profileService.student());
     }
 
-    public Resource applicationResume(Long applicationId) {
+    public Resource applicationResume(String applicationId) {
         User user = currentUserService.user();
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Application not found"));

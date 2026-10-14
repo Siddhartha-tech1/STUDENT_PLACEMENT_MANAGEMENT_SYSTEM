@@ -58,14 +58,14 @@ public class AdminController {
     }
 
     @PatchMapping("/users/{id}/status")
-    public User status(@PathVariable Long id, @RequestParam AccountStatus status) {
+    public User status(@PathVariable String id, @RequestParam AccountStatus status) {
         User user = userRepository.findById(id).orElseThrow();
         user.setStatus(status);
         return userRepository.save(user);
     }
 
     @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable String id) {
         userRepository.deleteById(id);
     }
 

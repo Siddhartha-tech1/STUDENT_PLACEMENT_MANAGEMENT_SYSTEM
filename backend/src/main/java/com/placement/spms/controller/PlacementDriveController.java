@@ -25,7 +25,7 @@ public class PlacementDriveController {
     }
 
     @GetMapping("/{id}")
-    public DriveResponse get(@PathVariable Long id) {
+    public DriveResponse get(@PathVariable String id) {
         return driveService.get(id);
     }
 
@@ -35,22 +35,22 @@ public class PlacementDriveController {
     }
 
     @PutMapping("/{id}")
-    public DriveResponse update(@PathVariable Long id, @Valid @RequestBody DriveRequest request) {
+    public DriveResponse update(@PathVariable String id, @Valid @RequestBody DriveRequest request) {
         return driveService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable String id) {
         driveService.delete(id);
     }
 
     @PatchMapping("/{id}/status")
-    public DriveResponse status(@PathVariable Long id, @RequestParam DriveStatus status) {
+    public DriveResponse status(@PathVariable String id, @RequestParam DriveStatus status) {
         return driveService.updateStatus(id, status);
     }
 
     @GetMapping("/{id}/eligibility")
-    public EligibilityResponse eligibility(@PathVariable Long id) {
+    public EligibilityResponse eligibility(@PathVariable String id) {
         return driveService.eligibility(id);
     }
 }

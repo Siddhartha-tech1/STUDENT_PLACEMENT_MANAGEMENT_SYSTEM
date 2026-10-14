@@ -5,8 +5,8 @@ A full-stack college placement project with a React/Vite frontend and a Spring B
 ## Technology Stack
 
 - Frontend: React, Vite, JavaScript, Bootstrap 5, React Router, Axios, Lucide React
-- Backend: Java 21, Spring Boot, Spring Web, Spring Data JPA, Spring Security, JWT, Maven
-- Database: MySQL with Hibernate ORM
+- Backend: Java 21, Spring Boot, Spring Web, Spring Data MongoDB, Spring Security, JWT, Maven
+- Database: MongoDB
 - Testing: JUnit, Spring Boot Test, MockMvc-ready setup
 
 ## Project Structure
@@ -22,23 +22,15 @@ README.md   Setup and usage guide
 - Java 21
 - Maven 3.9+ or Maven Wrapper
 - Node.js 20+ and npm
-- MySQL 8+
+- MongoDB Community Server or a MongoDB Atlas cluster
 
 ## Database Setup
-
-Create a MySQL database:
-
-```sql
-CREATE DATABASE student_placement_db;
-```
 
 Copy `backend/.env.example` to your local environment values. Do not commit real secrets.
 
 Required backend variables:
 
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
+- `MONGODB_URI` (must include a database name, for example `mongodb://localhost:27017/student_placement_db`)
 - `JWT_SECRET`
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
@@ -50,18 +42,10 @@ The first administrator is created only when `ADMIN_EMAIL` and `ADMIN_PASSWORD` 
 
 From `backend/` on Windows PowerShell:
 
-For the quickest local demo without MySQL:
+For a local MongoDB instance:
 
 ```powershell
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
-```
-
-This uses a local H2 database file in `backend/data/` and creates a demo admin account from the `application-dev.properties` defaults.
-
-For the MySQL-backed version:
-
-```powershell
-mvn spring-boot:run
 ```
 
 The backend automatically reads `backend/.env` on startup. Environment variables set in PowerShell take priority over values in the file.
@@ -131,8 +115,7 @@ npm run build
 
 ## Common Setup Issues
 
-- MySQL connection fails: confirm `DB_URL`, username, password, and that MySQL is running.
-- `Access denied for user 'root'@'localhost' (using password: NO)`: set `$env:DB_PASSWORD="your_mysql_password"` before running the backend, or use the `dev` profile command above.
+- MongoDB connection fails: confirm `MONGODB_URI` includes a database name and that your local MongoDB server or Atlas IP-access list permits the connection.
 - Frontend cannot reach backend: confirm backend is on port `8080` and `VITE_API_BASE_URL` is correct.
 - Admin user not created: set `ADMIN_EMAIL` and `ADMIN_PASSWORD` before the first backend startup.
 - Resume upload fails: upload a valid PDF under 5 MB and ensure `RESUME_STORAGE_DIR` is writable.

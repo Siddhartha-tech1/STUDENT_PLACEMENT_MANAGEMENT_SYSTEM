@@ -1,53 +1,39 @@
 package com.placement.spms.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "placement_drives")
+@Document("placement_drives")
 public class PlacementDrive {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne(optional = false)
+    @DBRef
     private Company company;
 
-    @Column(nullable = false)
     private String jobTitle;
-    @Column(nullable = false, length = 3000)
     private String jobDescription;
     private String requiredQualifications;
     private String location;
     private String employmentType;
     private BigDecimal salaryPackage;
     private BigDecimal minimumCgpa;
-    @Column(length = 1000)
     private String eligibleDepartments;
-    @Column(length = 500)
     private String eligibleGraduationYears;
     private Integer maxBacklogs = 0;
-    @Column(length = 1000)
     private String requiredSkills;
     private LocalDate applicationOpenDate;
-    @Column(nullable = false)
     private LocalDate applicationDeadline;
-    @Column(length = 2000)
     private String recruitmentProcess;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private DriveStatus status = DriveStatus.OPEN;
-    @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
-    @Column(nullable = false)
     private Instant updatedAt = Instant.now();
 
-    @PreUpdate
-    void touch() { updatedAt = Instant.now(); }
-
-    public Long getId() { return id; }
+    public String getId() { return id; }
     public Company getCompany() { return company; }
     public void setCompany(Company company) { this.company = company; }
     public String getJobTitle() { return jobTitle; }

@@ -13,7 +13,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.message || error.message || 'Request failed';
+    const message = error.response?.data?.message
+      || (error.code === 'ERR_NETWORK' ? 'Cannot connect to the backend. Start it on http://localhost:8080 and verify MongoDB access.' : error.message)
+      || 'Request failed';
     return Promise.reject(new Error(message));
   }
 );

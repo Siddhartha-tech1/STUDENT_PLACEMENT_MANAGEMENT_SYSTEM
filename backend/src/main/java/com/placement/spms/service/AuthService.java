@@ -45,6 +45,7 @@ public class AuthService {
         user.setEmail(request.email().toLowerCase());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setRole(request.role());
+        user = userRepository.save(user);
 
         if (request.role() == Role.STUDENT) {
             if (!StringUtils.hasText(request.studentId()) || !StringUtils.hasText(request.department()) || request.graduationYear() == null) {

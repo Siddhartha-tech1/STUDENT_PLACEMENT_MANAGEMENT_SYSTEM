@@ -23,7 +23,7 @@ public class InterviewController {
     }
 
     @PutMapping("/{id}")
-    public InterviewResponse update(@PathVariable Long id, @Valid @RequestBody InterviewRequest request) {
+    public InterviewResponse update(@PathVariable String id, @Valid @RequestBody InterviewRequest request) {
         return interviewService.save(new InterviewRequest(request.applicationId(), request.interviewRound(),
                 request.interviewDateTime(), request.mode(), request.locationOrMeetingDetails(), request.instructions()));
     }
@@ -34,7 +34,7 @@ public class InterviewController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable String id) {
         interviewService.delete(id);
     }
 }
