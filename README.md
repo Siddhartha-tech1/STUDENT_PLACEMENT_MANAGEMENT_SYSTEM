@@ -63,6 +63,23 @@ npm run dev
 
 The frontend runs at `http://localhost:5173`.
 
+## Deploy on Render
+
+This repository includes a `render.yaml` Blueprint that creates two services:
+
+- `spms-api`: Spring Boot API built from `backend/Dockerfile`
+- `spms-frontend`: React/Vite static site with an SPA rewrite rule
+
+In Render, choose **New > Blueprint** and select this repository. Render will request the values marked as secrets. Set them as follows:
+
+- `MONGODB_URI`: your MongoDB Atlas URI, including the database name
+- `JWT_SECRET`: allow Render to generate it
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD`: optional initial administrator credentials
+- `VITE_API_BASE_URL`: `https://<your-api-service>.onrender.com/api`
+- `CORS_ALLOWED_ORIGINS`: `https://<your-frontend-site>.onrender.com`
+
+Because the frontend's Vite variables are embedded at build time, save `VITE_API_BASE_URL` with a rebuild after the API has its Render URL. Save `CORS_ALLOWED_ORIGINS` and redeploy the API after the frontend has its URL. Keep the Atlas database user credentials only in Render's environment settings, never in Git.
+
 ## Build And Test
 
 Backend:
